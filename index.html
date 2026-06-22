@@ -27,10 +27,11 @@
                     <h2 class="formControls_txt">最實用的線上待辦事項服務</h2>
                     <label class="formControls_label" for="sign-in-email">Email</label>
                     <input class="formControls_input" type="text" id="sign-in-email" name="email" placeholder="請輸入 email" required>
-                    <span>此欄位不可留空</span>
+                    <span id="email-error"></span>
                     <label class="formControls_label" for="sign-in-pwd">密碼</label>
                     <input class="formControls_input" type="password" name="pwd" id="sign-in-pwd" placeholder="請輸入密碼" required>
-                    <input class="formControls_btnSubmit sign-in-btn" type="button" onclick="javascript:location.href='#todoListPage'" value="登入">
+                    <span id="pwd-error"></span>
+                    <input class="formControls_btnSubmit sign-in-btn" type="button" value="登入">
                     <a class="formControls_btnLink" href="#signUpPage">註冊帳號</a>
                 </form>
             </div>

@@ -50,3 +50,55 @@ async function signUp(signUpEmail, signUpPwd, nickName) {
     console.error(error.message);
   }
 }
+
+// 登入帳號
+const signInEmail = document.querySelector('#sign-in-email');
+const signInPwd = document.querySelector('#sign-in-pwd');
+const signInBtn = document.querySelector('.sign-in-btn');
+const emailError = document.querySelector('#email-error');
+const pwdError = document.querySelector('#pwd-error');
+
+signInBtn.addEventListener("click", function(e) {
+  emailError.textContent = '';
+  pwdError.textContent = '';
+  
+  if (signInEmail.value.trim() === '') {
+    emailError.textContent = '此欄位不可留空'
+  };
+
+  signIn(signInEmail.value, signInPwd.value);
+})
+
+async function signIn(signInEmail, signInPwd) {
+  try {
+    const response = await fetch(`${baseUrl}/users/sign_in`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          "email": signInEmail,
+          "password": signInPwd
+        })
+      }
+    );
+    const data = await response.json();
+
+    if (!response.ok) {
+      const errorMessages = {
+        400: '密碼為空或長度不足 6 個字',
+        401: '帳號密碼驗證錯誤',
+        404: '用戶不存在'
+      };
+
+      const message = errorMessages[response.status] || '發生未知錯誤';
+      throw new Error(message);
+    }
+
+    localStorage.setItem('token', data.token);
+    location.href = '#todoListPage';
+    return data;
+
+  } catch (error) {
+    pwdError.textContent = error.message;
+  }
+}
