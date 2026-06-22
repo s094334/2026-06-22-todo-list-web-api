@@ -85,7 +85,7 @@ async function signIn(signInEmail, signInPwd) {
 
     if (!response.ok) {
       const errorMessages = {
-        400: '密碼為空或長度不足 6 個字',
+        400: '欄位驗證失敗',
         401: '帳號密碼驗證錯誤',
         404: '用戶不存在'
       };
