@@ -43,7 +43,9 @@ async function signUp(signUpEmail, signUpPwd, nickName) {
     );
 
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`)
+      const message = response.status === 400 ? '此 email 已被註冊' : '發生未知錯誤';
+      alert(message);
+      return;
     }
 
     const data = await response.json();
@@ -63,6 +65,7 @@ const signInPwd = document.querySelector('#sign-in-pwd');
 const signInBtn = document.querySelector('.sign-in-btn');
 const emailError = document.querySelector('#email-error');
 const pwdError = document.querySelector('#pwd-error');
+const displayName = document.querySelector('.todo_sm');
 
 signInBtn.addEventListener("click", function(e) {
   emailError.textContent = '';
@@ -73,6 +76,7 @@ signInBtn.addEventListener("click", function(e) {
   };
 
   signIn(signInEmail.value, signInPwd.value);
+  displayName.textContent = localStorage.getItem('nickname');
 })
 
 async function signIn(signInEmail, signInPwd) {
@@ -109,4 +113,3 @@ async function signIn(signInEmail, signInPwd) {
   }
 }
 
-// 
