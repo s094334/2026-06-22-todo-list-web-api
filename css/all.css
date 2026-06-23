@@ -527,4 +527,21 @@ nav ul a span {
   font-size: 0.875rem;
   text-decoration: none;
 }
+
+section {
+  display: none;
+}
+
+section:target {
+  display: block;
+}
+
+#loginPage {
+  display: block;
+}
+
+#todoListPage:target ~ #loginPage,
+#signUpPage:target ~ #loginPage {
+  display: none;
+}
 /*# sourceMappingURL=all.css.map */
