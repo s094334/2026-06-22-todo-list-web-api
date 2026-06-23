@@ -539,9 +539,4 @@ section:target {
 #loginPage {
   display: block;
 }
-
-#todoListPage:target ~ #loginPage,
-#signUpPage:target ~ #loginPage {
-  display: none;
-}
 /*# sourceMappingURL=all.css.map */
