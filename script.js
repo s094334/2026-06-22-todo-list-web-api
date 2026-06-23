@@ -74,9 +74,6 @@ signInBtn.addEventListener("click", function(e) {
   };
 
   signIn(signInEmail.value, signInPwd.value);
-  
-  const nickname =  localStorage.getItem('nickname')
-  displayName.textContent = `${nickname}的待辦`;
 })
 
 async function signIn(signInEmail, signInPwd) {
@@ -103,10 +100,12 @@ async function signIn(signInEmail, signInPwd) {
       const message = errorMessages[response.status] || '發生未知錯誤';
       throw new Error(message);
     }
-    console.log(data.nickname, data.token)
+
     localStorage.setItem('nickname', data.nickname);
     localStorage.setItem('token', data.token);
     location.href = '#todoListPage';
+    const nickname =  localStorage.getItem('nickname')
+    displayName.textContent = `${nickname}的待辦`;
     return data;
 
   } catch (error) {
