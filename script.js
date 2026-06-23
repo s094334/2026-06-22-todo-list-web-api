@@ -49,8 +49,6 @@ async function signUp(signUpEmail, signUpPwd, nickName) {
     }
 
     const data = await response.json();
-    localStorage.setItem('uid', data.uid);
-    localStorage.setItem('nickname', nickName);
     alert('註冊成功，歡迎登入！');
     location.href = '#loginPage';
     return data;
@@ -76,7 +74,9 @@ signInBtn.addEventListener("click", function(e) {
   };
 
   signIn(signInEmail.value, signInPwd.value);
-  displayName.textContent = localStorage.getItem('nickname');
+  
+  const nickname =  localStorage.getItem('nickname')
+  displayName.textContent = `${nickname}的待辦`;
 })
 
 async function signIn(signInEmail, signInPwd) {
@@ -103,7 +103,8 @@ async function signIn(signInEmail, signInPwd) {
       const message = errorMessages[response.status] || '發生未知錯誤';
       throw new Error(message);
     }
-
+    console.log(data.nickname, data.token)
+    localStorage.setItem('nickname', data.nickname);
     localStorage.setItem('token', data.token);
     location.href = '#todoListPage';
     return data;
@@ -137,9 +138,44 @@ async function signOut() {
 
     const data = await response.json();
     localStorage.removeItem('token');
-    localStorage.removeItem('uid');
     localStorage.removeItem('nickname');
     location.href = '#loginPage';
+
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+// 實作登入狀態驗證
+document.addEventListener('DOMContentLoaded', async function() {
+  if (location.hash === '#todoListPage') {
+    await checkOut();
+  }
+});
+
+async function checkOut() {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('登入已過期，請重新登入');
+    location.href = '#loginPage';
+    return;
+  }
+
+  try {
+    const response = await fetch(`${baseUrl}/users/checkout`, 
+      {
+        method: 'GET',
+        headers: {
+          'Authorization': token
+        }
+      }
+    );
+
+    if(!response.ok) {
+      localStorage.removeItem('token');
+      location.href = '#loginPage';
+      return;
+    }
 
   } catch (error) {
     console.log(error.message)
