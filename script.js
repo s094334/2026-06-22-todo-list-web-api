@@ -12,6 +12,11 @@ signUpBtn.addEventListener("click", function(e) {
     alert("不能輸入空白值");
     return
   }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(signUpEmail.value)) {
+    alert("請輸入正確的 email 格式");
+    return;
+  }
   if (signUpPwd.value.trim().length <= 6) {
     alert("password 長度不足 6 個字");
     return
@@ -38,16 +43,17 @@ async function signUp(signUpEmail, signUpPwd, nickName) {
     );
 
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+      throw new Error(`HTTP ${response.status}`)
     }
 
     const data = await response.json();
     localStorage.setItem('uid', data.uid);
+    localStorage.setItem('nickname', nickName);
     alert('註冊成功，歡迎登入！');
     location.href = '#loginPage';
     return data;
   } catch (error) {
-    console.error(error.message);
+    console.log(error.message);
   }
 }
 
@@ -102,3 +108,5 @@ async function signIn(signInEmail, signInPwd) {
     pwdError.textContent = error.message;
   }
 }
+
+// 
