@@ -113,3 +113,35 @@ async function signIn(signInEmail, signInPwd) {
   }
 }
 
+// 登出帳號
+const signOutBtn = document.querySelector('.sign-out-btn');
+
+signOutBtn.addEventListener("click", function(e) {
+  signOut();
+})
+
+async function signOut() {
+  try {
+    const response = await fetch(`${baseUrl}/users/sign_out`,
+      {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          "Authorization": localStorage.getItem('token') 
+        },
+      });
+    
+    if(!response.ok) {
+      throw new Error(response.status);
+    }
+
+    const data = await response.json();
+    localStorage.removeItem('token');
+    localStorage.removeItem('uid');
+    localStorage.removeItem('nickname');
+    location.href = '#loginPage';
+
+  } catch (error) {
+    console.log(error.message)
+  }
+}
