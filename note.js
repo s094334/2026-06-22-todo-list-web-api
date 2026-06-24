@@ -1,5 +1,5 @@
 let currentTab = 'all';
-const todoItems = document.querySelector(".todoList_item");
+const todoItems = document.querySelector('.todoList_item');
 const baseUrl = 'https://todolist-api.hexschool.io';
 
 // 取得目前 todo
@@ -9,10 +9,11 @@ async function getTodo() {
     const response = await fetch(`${baseUrl}/todos/`,
       {
         method: 'GET',
-        headers: { 
-          'Content-Type': 'application/json',
-          "Authorization": token
-        },
+        headers: 
+          { 
+            'Content-Type': 'application/json',
+            'Authorization': token
+          },
       }
     )
 
@@ -39,14 +40,14 @@ async function renderData() {
     filteredData.forEach(function(item) {
       const { id, status, content } = item;
       template += `
-        <li data-id="${id}">
-          <label class="todoList_label">
-            <input class="todoList_input" type="checkbox" value="true" ${status ? 'checked' : ''}>
-            <span class="todo_content">${content}</span>
+        <li data-id='${id}'>
+          <label class='todoList_label'>
+            <input class='todoList_input' type='checkbox' value='true' ${status ? 'checked' : ''}>
+            <span class='todo_content'>${content}</span>
           </label>
-          <button class="editBtn">edit</button>
-          <a href="#">
-            <i class="fa fa-times"></i>
+          <button class='editBtn'>edit</button>
+          <a href='#'>
+            <i class='fa fa-times'></i>
           </a>
         </li>
       `
@@ -58,20 +59,20 @@ async function renderData() {
 renderData()
 
 // 新增 todo
-const addBtn = document.querySelector(".addBtn");
-const todoText = document.querySelector(".txt");
+const addBtn = document.querySelector('.addBtn');
+const todoText = document.querySelector('.txt');
 
-addBtn.addEventListener("click", function(e) {
+addBtn.addEventListener('click', function(e) {
   e.preventDefault();
   if (todoText.value.trim() === '') {
-    alert("不能輸入空白值");
+    alert('不能輸入空白值');
     return
   }
   addTodo(todoText.value)
   todoText.value = '';
 })
 
-todoText.addEventListener("keydown", function(e) {
+todoText.addEventListener('keydown', function(e) {
   if (todoText.value === '' && e.key === ' ') {
     e.preventDefault();
   }
@@ -83,9 +84,10 @@ async function addTodo(content) {
       {
         method: 'POST',
         headers: 
-        { 'Content-Type': 'application/json',
-          'Authorization': token
-        },
+          { 
+            'Content-Type': 'application/json',
+            'Authorization': token
+          },
         body: JSON.stringify({
           content: content,
         })
@@ -97,11 +99,6 @@ async function addTodo(content) {
     }
 
     const data = await response.json();
-    localStorage.setItem("id", data.newTodo.id);
-    localStorage.setItem("createTime", data.newTodo.createTime);
-    localStorage.setItem("content", data.newTodo.content);
-    localStorage.setItem("status", data.newTodo.status);
-
     await renderData();
     return data;
   } catch (error) {
@@ -110,7 +107,7 @@ async function addTodo(content) {
 }
 
 // 更新 todo 狀態
-todoItems.addEventListener("change", function(e) {
+todoItems.addEventListener('change', function(e) {
   if (!e.target.classList.contains('todoList_input')) return;
   const list = e.target.closest('li');
   const todoId = list.dataset.id;
@@ -124,9 +121,10 @@ async function toggleStatus(id) {
       {
         method: 'PATCH',
         headers: 
-        { 'Content-Type': 'application/json',
-          'Authorization': token
-        }
+          { 
+            'Content-Type': 'application/json',
+            'Authorization': token
+          }
       }
     )
 
@@ -142,7 +140,7 @@ async function toggleStatus(id) {
 }
 
 // 刪除 todo
-todoItems.addEventListener("click", function(e) {
+todoItems.addEventListener('click', function(e) {
     if (!e.target.closest('a')) return;
     e.preventDefault();
 
@@ -158,22 +156,16 @@ async function deleteTodo(id) {
       {
         method: 'DELETE',
         headers: 
-        { 
-          'Content-Type': 'application/json',
-          'Authorization': token
-        }
+          { 
+            'Content-Type': 'application/json',
+            'Authorization': token
+          }
       }
     )
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`)
     }
-
-    localStorage.removeItem("id");
-    localStorage.removeItem("createTime");
-    localStorage.removeItem("content");
-    localStorage.removeItem("status");
-
     await renderData();
   } catch (error) {
     console.log(error.message)
@@ -224,7 +216,7 @@ async function editTodo(id, content) {
             'Content-Type': 'application/json',
             'Authorization': token
           },
-        body: JSON.stringify({ "content" : content })
+        body: JSON.stringify({ 'content' : content })
       }
     )
 
@@ -241,16 +233,16 @@ async function editTodo(id, content) {
 // 顯示全部、待完成還是已完成
 const todoListTab = document.querySelector('.todoList_tab');
 
-todoListTab.addEventListener("click", function(e) {
+todoListTab.addEventListener('click', function(e) {
   e.preventDefault();
 
   const allTabs = todoListTab.querySelectorAll('a');
   allTabs.forEach(function(tab) {
-    tab.classList.remove("active");
+    tab.classList.remove('active');
   })
 
   const tab = e.target.closest('a');
-  tab.classList.add("active");
+  tab.classList.add('active');
 
   const filter = tab.dataset.tab;
   currentTab = filter;
@@ -272,6 +264,6 @@ function filteredTab(data) {
 // 計算已完成的項目
 function completedCount(data) {
   const completedCount = data.filter(item => item.status).length;
-  const el = document.querySelector(".todoList_statistics p");
+  const el = document.querySelector('.todoList_statistics p');
   el.textContent = `${completedCount} 個已完成項目`;
 }
