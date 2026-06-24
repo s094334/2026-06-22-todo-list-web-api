@@ -98,3 +98,34 @@ async function addTodo(content) {
     console.log(error.message);
   }
 }
+
+// 更新 todo 狀態
+todoItems.addEventListener("click", function(e) {
+  const list = e.target.closest('li');
+  const todoId = list.dataset.id;
+
+  toggleStatus(todoId);
+})
+
+async function toggleStatus(id) {
+  try {
+    const response = await fetch(`${baseUrl}/todos/${id}/toggle`,
+      {
+        method: 'PATCH',
+        headers: 
+        { 'Content-Type': 'application/json',
+          'Authorization': token
+        }
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    await renderData()
+  } catch(error) {
+    console.log(error.message);
+  }
+
+}
