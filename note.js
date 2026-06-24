@@ -12,7 +12,7 @@ async function getTodo() {
         headers: 
           { 
             'Content-Type': 'application/json',
-            'Authorization': token
+            'Authorization': localStorage.getItem('token')
           },
       }
     )
@@ -86,7 +86,7 @@ async function addTodo(content) {
         headers: 
           { 
             'Content-Type': 'application/json',
-            'Authorization': token
+            'Authorization': localStorage.getItem('token')
           },
         body: JSON.stringify({
           content: content,
@@ -123,7 +123,7 @@ async function toggleStatus(id) {
         headers: 
           { 
             'Content-Type': 'application/json',
-            'Authorization': token
+            'Authorization': localStorage.getItem('token')
           }
       }
     )
@@ -158,7 +158,7 @@ async function deleteTodo(id) {
         headers: 
           { 
             'Content-Type': 'application/json',
-            'Authorization': token
+            'Authorization': localStorage.getItem('token')
           }
       }
     )
@@ -213,7 +213,7 @@ async function editTodo(id, content) {
         headers: 
           { 
             'Content-Type': 'application/json',
-            'Authorization': token
+            'Authorization': localStorage.getItem('token')
           },
         body: JSON.stringify({ 'content' : content })
       }
@@ -255,7 +255,7 @@ function filteredTab(data) {
       return data.filter(({ status }) => !status);
     case 'completed':
       return data.filter(({ status }) => status);
-    default: 
+    default:
       return data;
   }
 }
