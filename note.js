@@ -11,7 +11,7 @@ async function renderData() {
         method: 'GET',
         headers: { 
           'Content-Type': 'application/json',
-          "Authorization": localStorage.getItem('token') 
+          "Authorization": token
         },
       }
     )
@@ -20,19 +20,22 @@ async function renderData() {
       throw new Error(response.status);
     }
 
+    const json = await response.json();
+    const data = json.data;
+
     let template = '';
-      todos.forEach(function(item) {
-        const { id, completed, content } = item;
+      data.forEach(function(item) {
+        const { id, status, content } = item;
         template += `
-        <li data-id="${id}">
-          <label class="todoList_label">
-            <input class="todoList_input" type="checkbox" value="true" ${completed ? 'checked' : ''}>
-            <span>${content}</span>
-          </label>
-          <a href="#">
-            <i class="fa fa-times"></i>
-          </a>
-        </li>
+          <li data-id="${id}">
+            <label class="todoList_label">
+              <input class="todoList_input" type="checkbox" value="true" ${status ? 'checked' : ''}>
+              <span>${content}</span>
+            </label>
+            <a href="#">
+              <i class="fa fa-times"></i>
+            </a>
+          </li>
         `
       });
       todoItems.innerHTML = template;
@@ -71,7 +74,7 @@ async function addTodo(content) {
         method: 'POST',
         headers: 
         { 'Content-Type': 'application/json',
-          "Authorization": localStorage.getItem('token')
+          'Authorization': token
         },
         body: JSON.stringify({
           content: content,
@@ -83,11 +86,13 @@ async function addTodo(content) {
       throw new Error(`HTTP ${response.status}`);
     }
 
-    const data = response.json();
+    const data = await response.json();
     localStorage.setItem("id", data.newTodo.id);
     localStorage.setItem("createTime", data.newTodo.createTime);
     localStorage.setItem("content", data.newTodo.content);
     localStorage.setItem("status", data.newTodo.status);
+
+    await renderData();
     return data;
   } catch (error) {
     console.log(error.message);
