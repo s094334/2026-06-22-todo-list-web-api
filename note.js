@@ -52,6 +52,7 @@ async function renderData() {
       `
     });
   todoItems.innerHTML = template;
+  completedCount(data);
 }
 
 renderData()
@@ -71,8 +72,8 @@ addBtn.addEventListener("click", function(e) {
 })
 
 todoText.addEventListener("keydown", function(e) {
-  if (todoText.value === '' && e.key === ' ') {        
-    e.preventDefault();    
+  if (todoText.value === '' && e.key === ' ') {
+    e.preventDefault();
   }
 })
 
@@ -266,4 +267,11 @@ function filteredTab(data) {
     default: 
       return data;
   }
+}
+
+// 計算已完成的項目
+function completedCount(data) {
+  const completedCount = data.filter(item => item.status).length;
+  const el = document.querySelector(".todoList_statistics p");
+  el.textContent = `${completedCount} 個已完成項目`;
 }
