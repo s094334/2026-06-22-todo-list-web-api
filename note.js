@@ -30,8 +30,9 @@ async function renderData() {
           <li data-id="${id}">
             <label class="todoList_label">
               <input class="todoList_input" type="checkbox" value="true" ${status ? 'checked' : ''}>
-              <span>${content}</span>
+              <span class="todo_content">${content}</span>
             </label>
+            <button class="editBtn">edit</button>
             <a href="#">
               <i class="fa fa-times"></i>
             </a>
@@ -100,7 +101,7 @@ async function addTodo(content) {
 }
 
 // 更新 todo 狀態
-todoItems.addEventListener("click", function(e) {
+todoItems.addEventListener("change", function(e) {
   const list = e.target.closest('li');
   const todoId = list.dataset.id;
 
@@ -129,3 +130,44 @@ async function toggleStatus(id) {
   }
 
 }
+
+// 刪除 todo
+todoItems.addEventListener("click", function(e) {
+    if (!e.target.closest('a')) return;
+    e.preventDefault();
+
+    const list = e.target.closest('li');
+    const todoId = list.dataset.id;
+    
+    deleteTodo(todoId);
+})
+
+async function deleteTodo(id) {
+  try {
+    const response = await fetch(`${baseUrl}/todos/${id}`,
+      {
+        method: 'DELETE',
+        headers: 
+        { 'Content-Type': 'application/json',
+          'Authorization': token
+        }
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`)
+    }
+
+    localStorage.removeItem("id");
+    localStorage.removeItem("createTime");
+    localStorage.removeItem("content");
+    localStorage.removeItem("status");
+
+    await renderData();
+  } catch (error) {
+    console.log(error.message)
+  }
+  
+}
+
+// 修改 todo 內容
