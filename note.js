@@ -40,6 +40,7 @@ async function renderData() {
         `
       });
       todoItems.innerHTML = template;
+      return data
   } catch (error) {
     todoItems.innerHTML = '<p>載入失敗，請再試試唷！</p>'
     console.log(error.message)
@@ -102,6 +103,7 @@ async function addTodo(content) {
 
 // 更新 todo 狀態
 todoItems.addEventListener("change", function(e) {
+  if (!e.target.classList.contains('todoList_input')) return;
   const list = e.target.closest('li');
   const todoId = list.dataset.id;
 
@@ -148,7 +150,8 @@ async function deleteTodo(id) {
       {
         method: 'DELETE',
         headers: 
-        { 'Content-Type': 'application/json',
+        { 
+          'Content-Type': 'application/json',
           'Authorization': token
         }
       }
@@ -167,7 +170,62 @@ async function deleteTodo(id) {
   } catch (error) {
     console.log(error.message)
   }
-  
 }
 
 // 修改 todo 內容
+todoItems.addEventListener('click', function(e) {
+  if (!e.target.classList.contains('editBtn')) return;
+
+  const list = e.target.closest('li');
+  const todoId = list.dataset.id;
+
+  const span = list.querySelector('.todo_content');
+  const originText = span.textContent;
+
+  const input = document.createElement('input');
+  input.value = originText;
+  span.replaceWith(input);
+  input.focus();
+
+  async function submitEdit() {
+    const newContent = input.value.trim();
+    if (newContent && newContent !== originText) {
+      await editTodo(todoId, newContent);
+    } else {
+      await renderData();
+    }
+  }
+
+  input.addEventListener('blur', submitEdit);
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      input.blur();
+    }
+    if (e.key === 'Escape') renderData();
+  });
+})
+
+async function editTodo(id, content) {
+  try {
+    const response = await fetch(`${baseUrl}/todos/${id}`,
+      {
+        method: 'PUT',
+        headers: 
+          { 
+            'Content-Type': 'application/json',
+            'Authorization': token
+          },
+        body: JSON.stringify({ "content" : content })
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error(`http ${response.status}`)
+    }
+
+    await renderData();
+  } catch(error) {
+    console.log(error.message)
+  }
+}
