@@ -22,7 +22,7 @@ async function getTodo() {
 
     const json = await response.json();
     const data = json.data;
-    return filterTab(data, currentTab);
+    return data;
   } catch (error) {
     todoItems.innerHTML = '<p>載入失敗，請再試試唷！</p>'
     console.log(error.message)
@@ -31,9 +31,12 @@ async function getTodo() {
 
 // 渲染畫面
 async function renderData() {
-  const data = await getTodo(); 
+  const data = await getTodo();
+  if (!data) return;
+
+  const filteredData = filteredTab(data);
   let template = '';
-    data.forEach(function(item) {
+    filteredData.forEach(function(item) {
       const { id, status, content } = item;
       template += `
         <li data-id="${id}">
@@ -254,7 +257,7 @@ todoListTab.addEventListener("click", function(e) {
 })
 
 // 篩選不同的 todo
-function filterTab(data, currentTab) {
+function filteredTab(data) {
   switch (currentTab) {
     case 'pending':
       return data.filter(({ status }) => !status);
