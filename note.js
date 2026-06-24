@@ -2,8 +2,8 @@ let currentTab = 'all';
 const todoItems = document.querySelector(".todoList_item");
 const baseUrl = 'https://todolist-api.hexschool.io';
 
-// 渲染畫面
-async function renderData() {
+// 取得目前 todo
+async function getTodo() {
   todoItems.innerHTML = '<p>載入中...</p>'
   try {
     const response = await fetch(`${baseUrl}/todos/`,
@@ -22,29 +22,33 @@ async function renderData() {
 
     const json = await response.json();
     const data = json.data;
-
-    let template = '';
-      data.forEach(function(item) {
-        const { id, status, content } = item;
-        template += `
-          <li data-id="${id}">
-            <label class="todoList_label">
-              <input class="todoList_input" type="checkbox" value="true" ${status ? 'checked' : ''}>
-              <span class="todo_content">${content}</span>
-            </label>
-            <button class="editBtn">edit</button>
-            <a href="#">
-              <i class="fa fa-times"></i>
-            </a>
-          </li>
-        `
-      });
-      todoItems.innerHTML = template;
-      return data
+    return filterTab(data, currentTab);
   } catch (error) {
     todoItems.innerHTML = '<p>載入失敗，請再試試唷！</p>'
     console.log(error.message)
   }
+}
+
+// 渲染畫面
+async function renderData() {
+  const data = await getTodo(); 
+  let template = '';
+    data.forEach(function(item) {
+      const { id, status, content } = item;
+      template += `
+        <li data-id="${id}">
+          <label class="todoList_label">
+            <input class="todoList_input" type="checkbox" value="true" ${status ? 'checked' : ''}>
+            <span class="todo_content">${content}</span>
+          </label>
+          <button class="editBtn">edit</button>
+          <a href="#">
+            <i class="fa fa-times"></i>
+          </a>
+        </li>
+      `
+    });
+  todoItems.innerHTML = template;
 }
 
 renderData()
@@ -227,5 +231,36 @@ async function editTodo(id, content) {
     await renderData();
   } catch(error) {
     console.log(error.message)
+  }
+}
+
+// 顯示全部、待完成還是已完成
+const todoListTab = document.querySelector('.todoList_tab');
+
+todoListTab.addEventListener("click", function(e) {
+  e.preventDefault();
+
+  const allTabs = todoListTab.querySelectorAll('a');
+  allTabs.forEach(function(tab) {
+    tab.classList.remove("active");
+  })
+
+  const tab = e.target.closest('a');
+  tab.classList.add("active");
+
+  const filter = tab.dataset.tab;
+  currentTab = filter;
+  renderData();
+})
+
+// 篩選不同的 todo
+function filterTab(data, currentTab) {
+  switch (currentTab) {
+    case 'pending':
+      return data.filter(({ status }) => !status);
+    case 'completed':
+      return data.filter(({ status }) => status);
+    default: 
+      return data;
   }
 }
