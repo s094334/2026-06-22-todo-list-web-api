@@ -198,11 +198,10 @@ todoItems.addEventListener('click', function(e) {
 
   input.addEventListener('blur', submitEdit);
   input.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !e.isComposing) {
       e.preventDefault();
       input.blur();
-    }
-    if (e.key === 'Escape') renderData();
+    } else if (e.key === 'Escape') renderData();
   });
 })
 
