@@ -1,5 +1,3 @@
-const baseUrl = 'https://todolist-api.hexschool.io';
-
 // 註冊帳號
 const signUpEmail = document.querySelector('#sign-up-email');
 const nickName = document.querySelector('#name');
@@ -112,8 +110,8 @@ async function signIn(signInEmail, signInPwd) {
     localStorage.setItem('nickname', data.nickname);
     localStorage.setItem('token', data.token);
     location.href = '#todoListPage';
-    const nickname =  localStorage.getItem('nickname')
-    displayName.textContent = `${nickname}的待辦`;
+    
+    await renderData();
     return data;
 
   } catch (error) {
@@ -183,6 +181,9 @@ async function checkOut() {
       location.href = '#loginPage';
       return;
     }
+
+    const nickname =  localStorage.getItem('nickname')
+    displayName.textContent = `${nickname} 的待辦`;
 
   } catch (error) {
     console.log(error.message)

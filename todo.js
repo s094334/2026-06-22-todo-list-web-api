@@ -1,10 +1,10 @@
 let currentTab = 'all';
 const todoItems = document.querySelector('.todoList_item');
-const baseUrl = 'https://todolist-api.hexschool.io';
 const headers = {
   'Content-Type': 'application/json',
   'Authorization': localStorage.getItem('token')
 };
+var baseUrl = 'https://todolist-api.hexschool.io';
 
 // 取得目前 todo
 async function getTodo() {
@@ -51,7 +51,7 @@ async function renderData() {
             <input class='todoList_input' type='checkbox' value='true' ${status ? 'checked' : ''}>
             <span class='todo_content'>${content}</span>
           </label>
-          <button class='editBtn'>edit</button>
+          <button class='editBtn'>編輯</button>
           <a href='#'>
             <i class='fa fa-times'></i>
           </a>
