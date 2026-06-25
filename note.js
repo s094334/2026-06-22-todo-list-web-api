@@ -1,6 +1,10 @@
 let currentTab = 'all';
 const todoItems = document.querySelector('.todoList_item');
 const baseUrl = 'https://todolist-api.hexschool.io';
+const headers = {
+  'Content-Type': 'application/json',
+  'Authorization': localStorage.getItem('token')
+};
 
 // 取得目前 todo
 async function getTodo() {
@@ -9,13 +13,15 @@ async function getTodo() {
     const response = await fetch(`${baseUrl}/todos/`,
       {
         method: 'GET',
-        headers: 
-          { 
-            'Content-Type': 'application/json',
-            'Authorization': localStorage.getItem('token')
-          },
+        headers,
       }
     )
+
+    if (response.status === 403) {
+      alert('登入已過期，請重新登入');
+      location.href = '#loginPage';
+      throw new Error('403');
+    }
 
     if (!response.ok) {
       throw new Error(response.status);
@@ -83,20 +89,22 @@ async function addTodo(content) {
     const response = await fetch(`${baseUrl}/todos/`,
       {
         method: 'POST',
-        headers: 
-          { 
-            'Content-Type': 'application/json',
-            'Authorization': localStorage.getItem('token')
-          },
+        headers,
         body: JSON.stringify({
           content: content,
         })
       }
-    )
+    );
+
+    if (response.status === 403) {
+      alert('登入已過期，請重新登入');
+      location.href = '#loginPage';
+      throw new Error('403');
+    };
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
-    }
+    };
 
     const data = await response.json();
     await renderData();
@@ -120,17 +128,19 @@ async function toggleStatus(id) {
     const response = await fetch(`${baseUrl}/todos/${id}/toggle`,
       {
         method: 'PATCH',
-        headers: 
-          { 
-            'Content-Type': 'application/json',
-            'Authorization': localStorage.getItem('token')
-          }
+        headers
       }
-    )
+    );
+
+    if (response.status === 403) {
+      alert('登入已過期，請重新登入');
+      location.href = '#loginPage';
+      throw new Error('403');
+    };
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
-    }
+    };
 
     await renderData()
   } catch(error) {
@@ -155,17 +165,19 @@ async function deleteTodo(id) {
     const response = await fetch(`${baseUrl}/todos/${id}`,
       {
         method: 'DELETE',
-        headers: 
-          { 
-            'Content-Type': 'application/json',
-            'Authorization': localStorage.getItem('token')
-          }
+        headers
       }
-    )
+    );
+
+    if (response.status === 403) {
+      alert('登入已過期，請重新登入');
+      location.href = '#loginPage';
+      throw new Error('403');
+    };
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`)
-    }
+    };
     await renderData();
   } catch (error) {
     console.log(error.message)
@@ -210,18 +222,20 @@ async function editTodo(id, content) {
     const response = await fetch(`${baseUrl}/todos/${id}`,
       {
         method: 'PUT',
-        headers: 
-          { 
-            'Content-Type': 'application/json',
-            'Authorization': localStorage.getItem('token')
-          },
+        headers,
         body: JSON.stringify({ 'content' : content })
       }
-    )
+    );
+
+    if (response.status === 403) {
+      alert('登入已過期，請重新登入');
+      location.href = '#loginPage';
+      throw new Error('403');
+    };
 
     if (!response.ok) {
       throw new Error(`http ${response.status}`)
-    }
+    };
 
     await renderData();
   } catch(error) {
