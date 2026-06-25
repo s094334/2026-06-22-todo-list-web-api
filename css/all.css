@@ -528,6 +528,11 @@ nav ul a span {
   opacity: 1;
 }
 
+.todoList_item {
+  overflow-y: auto;
+  max-height: 400px;
+}
+
 .todoList_list .todoList_statistics {
   display: -webkit-box;
   display: -ms-flexbox;

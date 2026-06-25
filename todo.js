@@ -43,8 +43,8 @@ async function renderData() {
 
   const filteredData = filteredTab(data);
   let template = '';
-    filteredData.forEach(function(item) {
-      const { id, status, content } = item;
+    filteredData.forEach(function(todo) {
+      const { id, status, content } = todo;
       template += `
         <li data-id='${id}'>
           <label class='todoList_label'>
@@ -275,8 +275,20 @@ function filteredTab(data) {
 }
 
 // 計算已完成的項目
-function completedCount(data) {
-  const completedCount = data.filter(item => item.status).length;
+function completedCount(todos) {
+  const completedCount = todos.filter(item => item.status).length;
   const el = document.querySelector('.todoList_statistics p');
   el.textContent = `${completedCount} 個已完成項目`;
 }
+
+// 清除已完成項目
+const delAllBtn = document.querySelector(".todoList_statistics a");
+delAllBtn.addEventListener("click", async function(e) {
+  e.preventDefault();
+  const currentData = await getTodo();
+  if (!currentData) return;
+
+  await Promise.all(currentData.map(todo => deleteTodo(todo.id)));
+  alert('已清除全部項目')
+  await renderData();
+})
