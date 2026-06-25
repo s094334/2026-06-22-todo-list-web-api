@@ -8,9 +8,11 @@ const signUpPwdAgain = document.querySelector('#sign-up-pwd2');
 const signUpBtn = document.querySelector('.sign-up-btn');
 
 signUpBtn.addEventListener("click", function(e) {
-  if (signUpEmail.value.trim() === '' || nickName.value.trim() === '' || signUpPwd.value.trim() === '' || signUpPwdAgain.value.trim() === '') {
-    alert("不能輸入空白值");
-    return
+  const fields = [signUpEmail, nickName, signUpPwd, signUpPwdAgain];
+
+  if (fields.some(field => field.value.trim() === '')) {
+    alert('不能輸入空白值');
+    return;
   }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(signUpEmail.value)) {
@@ -71,6 +73,12 @@ signInBtn.addEventListener("click", function(e) {
   
   if (signInEmail.value.trim() === '') {
     emailError.textContent = '此欄位不可留空'
+    return
+  };
+
+  if (signInPwd.value.trim() === '') {
+    pwdError.textContent = '此欄位不可留空'
+    return
   };
 
   signIn(signInEmail.value, signInPwd.value);
