@@ -282,13 +282,14 @@ function completedCount(todos) {
 }
 
 // 清除已完成項目
-const delAllBtn = document.querySelector(".todoList_statistics a");
-delAllBtn.addEventListener("click", async function(e) {
+const delcompletedBtn = document.querySelector(".todoList_statistics a");
+delcompletedBtn.addEventListener("click", async function(e) {
   e.preventDefault();
-  const currentData = await getTodo();
-  if (!currentData) return;
+  const data = await getTodo();
+  if (!data) return;
 
-  await Promise.all(currentData.map(todo => deleteTodo(todo.id)));
-  alert('已清除全部項目')
+  const completedData = data.filter(todo => todo.status);
+  await Promise.all(completedData.map(todo => deleteTodo(todo.id)));
+  alert('清除已完成項目')
   await renderData();
 })
