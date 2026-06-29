@@ -1,7 +1,6 @@
 let currentTab = 'all';
 const todoItems = document.querySelector('.todoList_item');
 const headers = {
-  'Content-Type': 'application/json',
   'Authorization': localStorage.getItem('token')
 };
 var baseUrl = 'https://todolist-api.hexschool.io';
@@ -10,27 +9,15 @@ var baseUrl = 'https://todolist-api.hexschool.io';
 async function getTodo() {
   todoItems.innerHTML = '<p>載入中...</p>'
   try {
-    const response = await fetch(`${baseUrl}/todos/`,
-      {
-        method: 'GET',
-        headers,
-      }
+    const { data } = await axios.get(`${baseUrl}/todos/`,
+      { headers }
     )
-
-    if (response.status === 403) {
+    return data.data;
+  } catch (error) {
+    if (error.data?.status === 403) {
       alert('登入已過期，請重新登入');
       location.href = '#loginPage';
-      throw new Error('403');
     }
-
-    if (!response.ok) {
-      throw new Error(response.status);
-    }
-
-    const json = await response.json();
-    const data = json.data;
-    return data;
-  } catch (error) {
     todoItems.innerHTML = '<p>載入失敗，請再試試唷！</p>'
     console.log(error.message)
   }
@@ -86,30 +73,17 @@ todoText.addEventListener('keydown', function(e) {
 
 async function addTodo(content) {
   try {
-    const response = await fetch(`${baseUrl}/todos/`,
-      {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          content: content,
-        })
-      }
+    const { data } = await axios.post(`${baseUrl}/todos/`,
+      { content },{ headers }
     );
 
-    if (response.status === 403) {
+    await renderData();
+    return data.data;
+  } catch (error) {
+    if (error.status === 403) {
       alert('登入已過期，請重新登入');
       location.href = '#loginPage';
-      throw new Error('403');
     };
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    };
-
-    const data = await response.json();
-    await renderData();
-    return data;
-  } catch (error) {
     console.log(error.message);
   }
 }
@@ -125,28 +99,18 @@ todoItems.addEventListener('change', function(e) {
 
 async function toggleStatus(id) {
   try {
-    const response = await fetch(`${baseUrl}/todos/${id}/toggle`,
-      {
-        method: 'PATCH',
-        headers
-      }
+    const { data } = await axios.patch(`${baseUrl}/todos/${id}/toggle`,
+      {}, { headers }
     );
-
-    if (response.status === 403) {
-      alert('登入已過期，請重新登入');
-      location.href = '#loginPage';
-      throw new Error('403');
-    };
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    };
 
     await renderData()
   } catch(error) {
+    if (error.status === 403) {
+      alert('登入已過期，請重新登入');
+      location.href = '#loginPage';
+    };
     console.log(error.message);
   }
-
 }
 
 // 刪除 todo
@@ -162,24 +126,16 @@ todoItems.addEventListener('click', function(e) {
 
 async function deleteTodo(id) {
   try {
-    const response = await fetch(`${baseUrl}/todos/${id}`,
-      {
-        method: 'DELETE',
-        headers
-      }
+    const { data } = await axios.delete(`${baseUrl}/todos/${id}`,
+      { headers }
     );
 
-    if (response.status === 403) {
-      alert('登入已過期，請重新登入');
-      location.href = '#loginPage';
-      throw new Error('403');
-    };
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`)
-    };
     await renderData();
   } catch (error) {
+    if (error.status === 403) {
+      alert('登入已過期，請重新登入');
+      location.href = '#loginPage';
+    };
     console.log(error.message)
   }
 }
@@ -219,26 +175,16 @@ todoItems.addEventListener('click', function(e) {
 
 async function editTodo(id, content) {
   try {
-    const response = await fetch(`${baseUrl}/todos/${id}`,
-      {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify({ 'content' : content })
-      }
+    const { data } = await axios.put(`${baseUrl}/todos/${id}`,
+      { content }, { headers }
     );
-
-    if (response.status === 403) {
-      alert('登入已過期，請重新登入');
-      location.href = '#loginPage';
-      throw new Error('403');
-    };
-
-    if (!response.ok) {
-      throw new Error(`http ${response.status}`)
-    };
 
     await renderData();
   } catch(error) {
+    if (error.status === 403) {
+      alert('登入已過期，請重新登入');
+      location.href = '#loginPage';
+    };
     console.log(error.message)
   }
 }

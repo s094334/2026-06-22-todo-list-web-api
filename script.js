@@ -40,6 +40,12 @@ async function signUp(signUpEmail, signUpPwd, nickName) {
     location.href = '#loginPage';
     return data;
   } catch (error) {
+    const errorMessages = {
+      400: '此 email 已被註冊',
+    };
+    const status = error.response?.status;
+    const message = errorMessages[status] || '發生未知錯誤';
+    alert(message);
     console.log(error.message);
   }
 }
