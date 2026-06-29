@@ -30,7 +30,7 @@ signUpBtn.addEventListener("click", function(e) {
 
 async function signUp(signUpEmail, signUpPwd, nickName) {
   try {
-    const { data } = await axios.post(`${baseUrl}/users/sign_up`,
+    const { data } = await api.post(`/users/sign_up`,
       {
         "email": signUpEmail,
         "password": signUpPwd,
@@ -77,7 +77,7 @@ signInBtn.addEventListener("click", function(e) {
 
 async function signIn(signInEmail, signInPwd) {
   try {
-    const { data } = await axios.post(`${baseUrl}/users/sign_in`,
+    const { data } = await api.post(`/users/sign_in`,
       {
         "email": signInEmail,
         "password": signInPwd
@@ -112,14 +112,7 @@ signOutBtn.addEventListener("click", function(e) {
 
 async function signOut() {
   try {
-    const { data } = await axios.post(`${baseUrl}/users/sign_out`,
-      {},
-      {
-        headers: { 
-          'Content-Type': 'application/json',
-          "Authorization": localStorage.getItem('token') 
-        }
-      });
+    const { data } = await api.post(`/users/sign_out`);
 
     localStorage.removeItem('token');
     localStorage.removeItem('nickname');
@@ -146,13 +139,7 @@ async function checkOut() {
   }
 
   try {
-    const { data } = await axios.get(`${baseUrl}/users/checkout`, 
-      {
-        headers: {
-          'Authorization': token
-        }
-      }
-    );
+    const { data } = await api.get(`/users/checkout`);
 
     const nickname =  localStorage.getItem('nickname')
     displayName.textContent = `${nickname} 的待辦`;

@@ -1,17 +1,25 @@
 let currentTab = 'all';
 const todoItems = document.querySelector('.todoList_item');
-const headers = {
-  'Authorization': localStorage.getItem('token')
-};
 var baseUrl = 'https://todolist-api.hexschool.io';
+
+// 設定 headers 的 token
+var api = axios.create({
+  baseURL: baseUrl
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.set('Authorization', token);
+  }
+  return config;
+});
 
 // 取得目前 todo
 async function getTodo() {
   todoItems.innerHTML = '<p>載入中...</p>'
   try {
-    const { data } = await axios.get(`${baseUrl}/todos/`,
-      { headers }
-    )
+    const { data } = await api.get(`/todos/`)
     return data.data;
   } catch (error) {
     if (error.data?.status === 403) {
@@ -73,8 +81,8 @@ todoText.addEventListener('keydown', function(e) {
 
 async function addTodo(content) {
   try {
-    const { data } = await axios.post(`${baseUrl}/todos/`,
-      { content },{ headers }
+    const { data } = await api.post(`/todos/`,
+      { content }
     );
 
     await renderData();
@@ -99,9 +107,7 @@ todoItems.addEventListener('change', function(e) {
 
 async function toggleStatus(id) {
   try {
-    const { data } = await axios.patch(`${baseUrl}/todos/${id}/toggle`,
-      {}, { headers }
-    );
+    const { data } = await api.patch(`/todos/${id}/toggle`);
 
     await renderData()
   } catch(error) {
@@ -126,9 +132,7 @@ todoItems.addEventListener('click', function(e) {
 
 async function deleteTodo(id) {
   try {
-    const { data } = await axios.delete(`${baseUrl}/todos/${id}`,
-      { headers }
-    );
+    const { data } = await api.delete(`/todos/${id}`);
 
     await renderData();
   } catch (error) {
@@ -175,8 +179,8 @@ todoItems.addEventListener('click', function(e) {
 
 async function editTodo(id, content) {
   try {
-    const { data } = await axios.put(`${baseUrl}/todos/${id}`,
-      { content }, { headers }
+    const { data } = await api.put(`/todos/${id}`,
+      { content }
     );
 
     await renderData();
