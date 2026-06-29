@@ -30,25 +30,12 @@ signUpBtn.addEventListener("click", function(e) {
 
 async function signUp(signUpEmail, signUpPwd, nickName) {
   try {
-    const response = await fetch(`${baseUrl}/users/sign_up`,
+    const { data } = await axios.post(`${baseUrl}/users/sign_up`,
       {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          "email": signUpEmail,
-          "password": signUpPwd,
-          "nickname": nickName
-        })
-      }
-    );
-
-    if (!response.ok) {
-      const message = response.status === 400 ? '此 email 已被註冊' : '發生未知錯誤';
-      alert(message);
-      return;
-    }
-
-    const data = await response.json();
+        "email": signUpEmail,
+        "password": signUpPwd,
+        "nickname": nickName
+      })
     alert('註冊成功，歡迎登入！');
     location.href = '#loginPage';
     return data;
@@ -84,28 +71,11 @@ signInBtn.addEventListener("click", function(e) {
 
 async function signIn(signInEmail, signInPwd) {
   try {
-    const response = await fetch(`${baseUrl}/users/sign_in`,
+    const { data } = await axios.post(`${baseUrl}/users/sign_in`,
       {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          "email": signInEmail,
-          "password": signInPwd
-        })
-      }
-    );
-    const data = await response.json();
-
-    if (!response.ok) {
-      const errorMessages = {
-        400: '欄位驗證失敗',
-        401: '帳號密碼驗證錯誤',
-        404: '用戶不存在'
-      };
-
-      const message = errorMessages[response.status] || '發生未知錯誤';
-      throw new Error(message);
-    }
+        "email": signInEmail,
+        "password": signInPwd
+      });
 
     localStorage.setItem('nickname', data.nickname);
     localStorage.setItem('token', data.token);
@@ -115,7 +85,15 @@ async function signIn(signInEmail, signInPwd) {
     return data;
 
   } catch (error) {
-    pwdError.textContent = error.message;
+    const errorMessages = {
+      400: '欄位驗證失敗',
+      401: '帳號密碼驗證錯誤',
+      404: '用戶不存在'
+    };
+
+    const status = error.response?.status;
+    const message = errorMessages[status] || '發生未知錯誤';
+    pwdError.textContent = message;
   }
 }
 
@@ -128,20 +106,15 @@ signOutBtn.addEventListener("click", function(e) {
 
 async function signOut() {
   try {
-    const response = await fetch(`${baseUrl}/users/sign_out`,
+    const { data } = await axios.post(`${baseUrl}/users/sign_out`,
+      {},
       {
-        method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           "Authorization": localStorage.getItem('token') 
-        },
+        }
       });
-    
-    if(!response.ok) {
-      throw new Error(response.status);
-    }
 
-    const data = await response.json();
     localStorage.removeItem('token');
     localStorage.removeItem('nickname');
     location.href = '#loginPage';
@@ -167,25 +140,20 @@ async function checkOut() {
   }
 
   try {
-    const response = await fetch(`${baseUrl}/users/checkout`, 
+    const { data } = await axios.get(`${baseUrl}/users/checkout`, 
       {
-        method: 'GET',
         headers: {
           'Authorization': token
         }
       }
     );
 
-    if(!response.ok) {
-      localStorage.removeItem('token');
-      location.href = '#loginPage';
-      return;
-    }
-
     const nickname =  localStorage.getItem('nickname')
     displayName.textContent = `${nickname} 的待辦`;
 
   } catch (error) {
+    localStorage.removeItem('token');
+    location.href = '#loginPage';
     console.log(error.message)
   }
 }
