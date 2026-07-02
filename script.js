@@ -87,6 +87,9 @@ async function signIn(signInEmail, signInPwd) {
     localStorage.setItem('token', data.token);
     location.href = '#todoListPage';
     
+    const nickname =  localStorage.getItem('nickname')
+    displayName.textContent = `${nickname} 的待辦`;
+
     await renderData();
     return data;
 
@@ -140,9 +143,6 @@ async function checkOut() {
 
   try {
     const { data } = await api.get(`/users/checkout`);
-
-    const nickname =  localStorage.getItem('nickname')
-    displayName.textContent = `${nickname} 的待辦`;
 
   } catch (error) {
     localStorage.removeItem('token');
